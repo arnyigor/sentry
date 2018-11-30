@@ -5,9 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 class CadResponse {
     @SerializedName("data")
-    var data: List<List<String>>? = null
-    @SerializedName("signature")
-    var signature: Signature? = null
+    var data: List<List<Any>>? = null
     @SerializedName("count")
     var count: String? = null
     @SerializedName("fields")

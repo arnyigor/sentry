@@ -5,7 +5,7 @@ import com.arny.sentry.BaseApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class MainRepositoryImpl : BaseRepository, RemoteRepository {
+class MainRepositoryImpl : BaseRepository, RemoteRepository,LocalRepository {
     private object Holder {
         val INSTANCE = MainRepositoryImpl()
     }

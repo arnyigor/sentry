@@ -15,6 +15,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -153,10 +154,12 @@ fun getResponseError(throwable: Throwable): String {
 object ApiProvider {
     var timeout = 30L
     fun <T> provideApi(
-        baseUrl: String,
-        clazz: Class<T>,
-        httpLevel: HttpLoggingInterceptor.Level? = HttpLoggingInterceptor.Level.BODY
+            baseUrl: String,
+            clazz: Class<T>,
+            httpLevel: HttpLoggingInterceptor.Level? = HttpLoggingInterceptor.Level.BODY,
+            useCoroutinAdapter: Boolean = false
     ): T {
+        val adapterFactory = if (useCoroutinAdapter) CoroutineCallAdapterFactory() else RxJava2CallAdapterFactory.create()
         val httpClient = OkHttpClient.Builder()
         val gson = GsonBuilder().setLenient().create()
         httpClient.connectTimeout(timeout, TimeUnit.SECONDS)
@@ -171,12 +174,11 @@ object ApiProvider {
                             if (BuildConfig.DEBUG) httpLevel else HttpLoggingInterceptor.Level.NONE
                 })
         httpClient.networkInterceptors().add(StethoInterceptor())
-        val client = httpClient.build()
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(client)
+                .client(httpClient.build())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addCallAdapterFactory(adapterFactory)
             .build()
             .create(clazz)
     }
