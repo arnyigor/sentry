@@ -211,13 +211,14 @@ fun <T> Bundle?.getExtra(extraName: String): T? {
     return this?.get(extraName) as? T
 }
 
-fun <T> launchAsync(block: suspend () -> T, onComplete: (T) -> Unit = {}, onError: (Throwable) -> Unit = {}, context: CoroutineDispatcher = Dispatchers.Main,dispatcher : CoroutineDispatcher = Dispatchers . IO): Job {
+fun <T> launchAsync(block: suspend () -> T, onComplete: (T) -> Unit = {}, onError: (Throwable) -> Unit = {}, context: CoroutineDispatcher = Dispatchers.Main,dispatcher : CoroutineDispatcher = Dispatchers.IO,onCanceled: () -> Unit = {}): Job {
     return CoroutineScope(context).launch {
         try {
             val result = CoroutineScope(dispatcher).async { block.invoke() }.await()
             onComplete.invoke(result)
         } catch (e: CancellationException) {
             Log.e("Execute Async", "canceled by user")
+            onCanceled()
         } catch (e: Exception) {
             onError(e)
         }

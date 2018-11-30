@@ -7,7 +7,7 @@ class CadResponse {
     @SerializedName("data")
     var data: List<List<Any>>? = null
     @SerializedName("count")
-    var count: String? = null
+    var count: Int? = null
     @SerializedName("fields")
     var fields: List<String>? = null
 

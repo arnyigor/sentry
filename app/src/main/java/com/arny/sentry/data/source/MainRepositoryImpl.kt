@@ -2,10 +2,11 @@ package com.arny.sentry.data.source
 
 import android.content.Context
 import com.arny.sentry.BaseApp
+import com.arny.sentry.data.models.Asteroid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class MainRepositoryImpl : BaseRepository, RemoteRepository,LocalRepository {
+class MainRepositoryImpl : BaseRepository, RemoteRepository, LocalRepository {
     private object Holder {
         val INSTANCE = MainRepositoryImpl()
     }

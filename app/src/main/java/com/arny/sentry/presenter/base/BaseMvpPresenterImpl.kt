@@ -22,13 +22,6 @@ open class BaseMvpPresenterImpl<V : BaseMvpView> : BaseMvpPresenter<V>, Lifecycl
         return mView
     }
 
-    override fun getStateBundle(): Bundle? {
-        if (stateBundle == null) {
-            stateBundle = Bundle()
-        }
-        return stateBundle
-    }
-
     override fun attachLifecycle(lifecycle: Lifecycle) {
         lifecycle.addObserver(this)
     }
@@ -45,9 +38,11 @@ open class BaseMvpPresenterImpl<V : BaseMvpView> : BaseMvpPresenter<V>, Lifecycl
         Log.i(BaseMvpPresenterImpl::class.java.simpleName, "onPresenterCreated: ");
     }
 
+    override fun onPresenterRestored() {
+        Log.i(BaseMvpPresenterImpl::class.java.simpleName, "onPresenterRestored: ");
+    }
+
     override fun onPresenterDestroy() {
-        if (stateBundle != null && !stateBundle!!.isEmpty) {
-            stateBundle!!.clear()
-        }
+        Log.i(BaseMvpPresenterImpl::class.java.simpleName, "onPresenterDestroy: ");
     }
 }

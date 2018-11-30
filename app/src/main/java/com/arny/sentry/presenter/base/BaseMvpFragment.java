@@ -24,16 +24,17 @@ public abstract class BaseMvpFragment<V extends BaseMvpView, P extends BaseMvpPr
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseViewModel<V, P> viewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-        boolean isPresenterCreated = false;
         if (viewModel.getPresenter() == null) {
             viewModel.setPresenter(initPresenter());
-            isPresenterCreated = true;
-        }
-        mPresenter = viewModel.getPresenter();
-        mPresenter.attachLifecycle(getLifecycle());
-        mPresenter.attachView((V) this);
-        if (isPresenterCreated) {
+            mPresenter = viewModel.getPresenter();
+            mPresenter.attachLifecycle(getLifecycle());
+            mPresenter.attachView((V) this);
             mPresenter.onPresenterCreated();
+        } else {
+            mPresenter = viewModel.getPresenter();
+            mPresenter.attachLifecycle(getLifecycle());
+            mPresenter.attachView((V) this);
+            mPresenter.onPresenterRestored();
         }
     }
 

@@ -1,34 +1,63 @@
 package com.arny.sentry.presenter.main
 
-import android.util.Log
+import com.arny.basemvp.data.utils.observeOnMain
+import com.arny.sentry.data.api.getResponseError
+import com.arny.sentry.data.models.Asteroid
 import com.arny.sentry.data.source.MainRepositoryImpl
-import com.arny.sentry.data.utils.launchAsync
 import com.arny.sentry.presenter.base.BaseMvpPresenterImpl
-import kotlinx.coroutines.Job
+import io.reactivex.disposables.CompositeDisposable
 
 
 class MainPresenter : BaseMvpPresenterImpl<MainContract.View>(), MainContract.Presenter {
     private val repository = MainRepositoryImpl.instance
-    private var job: Job? = null
+    private val compositeDisposable = CompositeDisposable()
+    private var requesting = false
+    private var cache: ArrayList<Asteroid> = arrayListOf()
 
-    override fun detachView() {
-        super.detachView()
-        job?.cancel()
+    override fun restoreState() {
+        if (requesting) {
+            mView?.showProgress(true)
+        }
+        if (cache.isNotEmpty()) {
+            mView?.updateList(cache)
+        }
     }
 
-    fun request(distance: Double? = 1.0, isLd: Boolean, year: Int? = 2018) {
-        val requestDistance: String = if (!isLd) distance.toString() else distance.toString() + "LD"
-        mView?.showProgress("Загрузка данных")
-        job = launchAsync({
-            val cadResponse = repository.requestApi(requestDistance, year?:2018).await()
-            repository.convertCadResponse(cadResponse)
-        }, {
-            mView?.showProgress("Данные загружены")
-            Log.i(MainPresenter::class.java.simpleName, "request: $it");
-        }, {
-            it.printStackTrace()
-            mView?.showProgress("")
-            mView?.showError(it.message)
-        })
+    fun request(distance: Double? = 1.0, useLunarDistance: Boolean, year: Int? = 2018) {
+        if (requesting) {
+            mView?.showError("Данные все еще загружаются")
+            return
+        }
+        compositeDisposable.clear()
+        val requestDistance: String = if (!useLunarDistance) distance.toString() else distance.toString() + "LD"
+        mView?.showProgress(true)
+        val subscribe = repository.requestApiAsteroids(requestDistance, year ?: 2018)
+                .map { repository.convertCadResponse(it) }
+                .observeOnMain()
+                .doOnSubscribe {
+                    requesting = true
+                }
+                .doOnDispose {
+                    requesting = false
+                    mView?.showProgress(false)
+                }
+                .subscribe({
+                    mView?.showProgress(false)
+                    requesting = false
+                    this.cache = it
+                    mView?.updateList(it)
+                    if (it.isNotEmpty()) {
+                        mView?.setInfoVisible(false)
+                    } else {
+                        mView?.setInfoVisible(true)
+                        mView?.showError("нет данных")
+                    }
+                }, {
+                    requesting = false
+                    it.printStackTrace()
+                    mView?.setInfoVisible(true)
+                    mView?.showError(getResponseError(it))
+                })
+        compositeDisposable.add(subscribe)
     }
 }

@@ -152,12 +152,12 @@ fun getResponseError(throwable: Throwable): String {
 }
 
 object ApiProvider {
-    var timeout = 30L
     fun <T> provideApi(
             baseUrl: String,
             clazz: Class<T>,
             httpLevel: HttpLoggingInterceptor.Level? = HttpLoggingInterceptor.Level.BODY,
-            useCoroutinAdapter: Boolean = false
+            useCoroutinAdapter: Boolean = false,
+            timeout: Long = 30L
     ): T {
         val adapterFactory = if (useCoroutinAdapter) CoroutineCallAdapterFactory() else RxJava2CallAdapterFactory.create()
         val httpClient = OkHttpClient.Builder()
