@@ -39,7 +39,8 @@ fun <T> observeOnMainThread(observable: Observable<T>): Observable<T> {
     return observable.observeOn(AndroidSchedulers.mainThread())
 }
 
-fun <T> Observable<T>.observeOnMain(): Observable<T> {
+fun <T> Observable<T>.
+        observeOnMain(): Observable<T> {
     return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }
 

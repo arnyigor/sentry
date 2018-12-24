@@ -6,5 +6,5 @@ import retrofit2.http.QueryMap
 
 interface SentryApiService {
     @GET("/cad.api")
-    fun request(@QueryMap options: Map<String, String>): Observable<CadResponse>
+    fun request(@QueryMap params: Map<String, String>): Observable<CadResponse>
 }

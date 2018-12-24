@@ -23,15 +23,16 @@ class MainPresenter : BaseMvpPresenterImpl<MainContract.View>(), MainContract.Pr
         }
     }
 
-    fun request(distance: Double? = 1.0, useLunarDistance: Boolean, year: Int? = 2018) {
+    fun request(distance: Double? = 1.0, useLunarDistance: Boolean, year: Int?, name: String?) {
         if (requesting) {
             mView?.showError("Данные все еще загружаются")
             return
         }
         compositeDisposable.clear()
         val requestDistance: String = if (!useLunarDistance) distance.toString() else distance.toString() + "LD"
+
         mView?.showProgress(true)
-        val subscribe = repository.requestApiAsteroids(requestDistance, year ?: 2018)
+        val subscribe = repository.requestApiAsteroids(requestDistance, year, name)
                 .map { repository.convertCadResponse(it) }
                 .observeOnMain()
                 .doOnSubscribe {
@@ -53,6 +54,7 @@ class MainPresenter : BaseMvpPresenterImpl<MainContract.View>(), MainContract.Pr
                         mView?.showError("нет данных")
                     }
                 }, {
+                    mView?.showProgress(false)
                     requesting = false
                     it.printStackTrace()
                     mView?.setInfoVisible(true)

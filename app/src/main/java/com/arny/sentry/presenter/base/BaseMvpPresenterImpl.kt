@@ -7,7 +7,6 @@ import android.util.Log
 
 
 open class BaseMvpPresenterImpl<V : BaseMvpView> : BaseMvpPresenter<V>, LifecycleObserver {
-    private var stateBundle: Bundle? = null
     protected var mView: V? = null
 
     override fun attachView(mvpView: V) {

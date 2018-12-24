@@ -21,6 +21,7 @@ interface LocalRepository : BaseRepository {
             }
             asteroids.add(asteroid)
         }
+        asteroids.sortBy { it.dist_min }
         return asteroids
     }
 

@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
-import com.arny.sentry.data.utils.Utility
-
 
 abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayListOf()) : RecyclerView.Adapter<SimpleAbstractAdapter.VH>() {
     protected var listener: OnViewHolderListener<T>? = null
@@ -20,7 +18,7 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
     private var constraint: CharSequence? = ""
 
     override fun onBindViewHolder(vh: VH, position: Int) {
-        bindView(getItem(position), vh)
+        getItem(position)?.let { bindView(it, vh) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -50,8 +48,8 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return areItemsTheSame(
-                mOldItems[oldItemPosition],
-                mNewItems[newItemPosition]
+                    mOldItems[oldItemPosition],
+                    mNewItems[newItemPosition]
             )
         }
 
@@ -59,8 +57,8 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return areContentsTheSame(
-                mOldItems[oldItemPosition],
-                mNewItems[newItemPosition]
+                    mOldItems[oldItemPosition],
+                    mNewItems[newItemPosition]
             )
         }
 
@@ -73,8 +71,8 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
         fun onItemClick(position: Int, item: T)
     }
 
-    fun getItem(position: Int): T {
-        return items[position]
+    fun getItem(position: Int): T? {
+        return items.getOrNull(position)
     }
 
     fun getItems(): ArrayList<T> {
@@ -87,15 +85,23 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
 
     fun addAll(list: List<T>) {
         val diffCallback = getDiffCallback()
-        if (diffCallback != null && !items.isEmpty()) {
-            diffCallback.setItems(items, list)
-            val diffResult = DiffUtil.calculateDiff(diffCallback)
-            items.clear()
-            items.addAll(list)
-            diffResult.dispatchUpdatesTo(this)
-        } else {
-            items.addAll(list)
-            notifyDataSetChanged()
+        when {
+            diffCallback != null && !items.isEmpty() -> {
+                diffCallback.setItems(items, list)
+                val diffResult = DiffUtil.calculateDiff(diffCallback)
+                items.clear()
+                items.addAll(list)
+                diffResult.dispatchUpdatesTo(this)
+            }
+            diffCallback == null && !items.isEmpty() -> {
+                items.clear()
+                items.addAll(list)
+                notifyDataSetChanged()
+            }
+            else -> {
+                items.addAll(list)
+                notifyDataSetChanged()
+            }
         }
     }
 
@@ -148,10 +154,6 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
         filter.filter(constraint, listener)
     }
 
-    protected fun itemToString(item: T): String? {
-        return item.toString()
-    }
-
     fun getFilter(): Filter {
         return filter
     }
@@ -191,7 +193,7 @@ abstract class SimpleAbstractAdapter<T>(private var items: ArrayList<T> = arrayL
                 }
                 val result = ArrayList<T>()
                 for (value in values) {
-                    if (!constraint.isNullOrBlank() && value != null) {
+                    if (constraint != null && constraint.trim().isNotEmpty() && value != null) {
                         if (filter.onFilterItem(constraint, value)) {
                             result.add(value)
                         }

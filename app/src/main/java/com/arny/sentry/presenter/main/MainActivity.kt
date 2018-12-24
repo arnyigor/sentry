@@ -2,6 +2,7 @@ package com.arny.sentry.presenter.main
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
 import com.arny.sentry.R
 import com.arny.sentry.data.models.Asteroid
 import com.arny.sentry.data.utils.parseDouble
@@ -9,6 +10,8 @@ import com.arny.sentry.data.utils.parseInt
 import com.arny.sentry.data.utils.setVisible
 import com.arny.sentry.presenter.base.BaseMvpActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import android.view.MenuInflater
+import android.view.MenuItem
 
 
 class MainActivity : BaseMvpActivity<MainContract.View, MainPresenter>(), MainContract.View {
@@ -18,11 +21,6 @@ class MainActivity : BaseMvpActivity<MainContract.View, MainPresenter>(), MainCo
         return MainPresenter()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        mPresenter.onPresenterDestroy()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,6 +28,32 @@ class MainActivity : BaseMvpActivity<MainContract.View, MainPresenter>(), MainCo
         swipe.setOnRefreshListener {
             requestAsteroids()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mPresenter.restoreState()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_update -> {
+                requestAsteroids()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        mPresenter.onPresenterDestroy()
     }
 
     override fun setInfoVisible(vis: Boolean) {
@@ -47,15 +71,11 @@ class MainActivity : BaseMvpActivity<MainContract.View, MainPresenter>(), MainCo
     }
 
     private fun requestAsteroids() {
+        val name = edt_name.text.toString()
         val dist = edt_dist.text.toString().parseDouble()
         val year = edt_max_year.text.toString().parseInt()
         val useLunarDistance = check_box_lunar_distance.isChecked
-        mPresenter.request(dist, useLunarDistance, year)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mPresenter.restoreState()
+        mPresenter.request(dist, useLunarDistance, year,name)
     }
 
     override fun updateList(list: ArrayList<Asteroid>) {
