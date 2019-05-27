@@ -1,8 +1,14 @@
 package com.arny.sentry.data.models
 
 import com.arny.sentry.data.utils.Utility
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
-class Asteroid {
+
+
+open class Asteroid: RealmObject() {
+    @PrimaryKey
+    var id: Long = 0
     var name: String? = null
     var orbit_id: String? = null
     var jd: Double? = null
