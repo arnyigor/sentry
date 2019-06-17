@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion versions.compileSdk
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation deps.kotlin.stdlib
+    // Tests
+    testImplementation deps.test.robolectric
+    testImplementation deps.test.junit
+    testImplementation deps.test.assertjCore
+    androidTestImplementation deps.test.assertjAndroid
+    androidTestImplementation deps.test.assertjSupport
+    androidTestImplementation deps.test.runner
+    //support
+    implementation deps.support.appCompat
+    implementation deps.support.design
+    implementation deps.support.support
+    //rx2
+    implementation deps.reactivex.rxJava
+    implementation deps.reactivex.rxAndroid
+    //dialogs
+    implementation deps.additional.materialDialogsCore
+    implementation deps.additional.materialDialogsCommon
+
+}
+repositories {
+    mavenCentral()
+}

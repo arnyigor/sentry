@@ -36,16 +36,17 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':core')
     implementation deps.kotlin.stdlib
-    implementation deps.kotlin.coroutinesCore
-    implementation deps.kotlin.coroutinesAndroid
+//    implementation deps.kotlin.coroutinesCore
+//    implementation deps.kotlin.coroutinesAndroid
     // Tests
-    testImplementation deps.test.robolectric
-    testImplementation deps.test.junit
-    testImplementation deps.test.assertjCore
-    androidTestImplementation deps.test.assertjAndroid
-    androidTestImplementation deps.test.assertjSupport
-    androidTestImplementation deps.test.runner
+//    testImplementation deps.test.robolectric
+//    testImplementation deps.test.junit
+//    testImplementation deps.test.assertjCore
+//    androidTestImplementation deps.test.assertjAndroid
+//    androidTestImplementation deps.test.assertjSupport
+//    androidTestImplementation deps.test.runner
     //support
     implementation deps.support.appCompat
     implementation deps.support.design
@@ -54,13 +55,13 @@ dependencies {
     implementation deps.support.support
     implementation deps.support.constraint
     /*Livecycle*/
-    implementation deps.android.lifecycleExt
-    implementation deps.android.lifecycleVM
-    implementation deps.android.lifecycleLD
-    implementation deps.android.lifecycleRT
-    annotationProcessor deps.android.lifecycleComp
-    kapt deps.android.lifecycleComp
-    implementation deps.android.lifecycleCommon
+//    implementation deps.android.lifecycleExt
+//    implementation deps.android.lifecycleVM
+//    implementation deps.android.lifecycleLD
+//    implementation deps.android.lifecycleRT
+//    annotationProcessor deps.android.lifecycleComp
+//    kapt deps.android.lifecycleComp
+//    implementation deps.android.lifecycleCommon
     //rx2
     implementation deps.reactivex.rxJava
     implementation deps.reactivex.rxAndroid
@@ -72,6 +73,9 @@ dependencies {
     implementation deps.square.coroutinsAdapter
     implementation deps.square.okhttp
     implementation deps.square.logging
+    //di
+    implementation deps.google.dagger
+    kapt deps.google.daggerCompiler
     //intersept
     implementation deps.facebook.stetho
     implementation deps.facebook.stethoRealm
@@ -80,5 +84,10 @@ dependencies {
     implementation deps.additional.toasty
     implementation deps.additional.materialDialogsCore
     implementation deps.additional.materialDialogsCommon
+    //mvp
+    implementation deps.additional.moxy
+    kapt deps.additional.moxyCompiler
+    implementation deps.additional.moxyAppCompat
+    implementation deps.additional.moxyAndroid
 }
 apply plugin: 'kotlin-android-extensions'

@@ -122,4 +122,18 @@ public class AstroUtils {
         return res;
     }
 
+    /**
+     * Вычисление радиуса астеройда по апсолютной магнитюде
+     *
+     * @param magn
+     * @param albedo
+     * @return metre
+     */
+    public static double getRadiusFromAbsoluteMagn(double magn, double albedo) {
+        double logr = Math.log10(albedo);
+        double step = 0.5 * (6.259 - logr - (0.4 * magn));
+        double result = Math.pow(10, step) / 2;
+        return MathUtils.round(result * 1000, 0);
+    }
+
 }

@@ -1,65 +1,64 @@
 package com.arny.sentry.presenter.main
 
-import com.arny.basemvp.data.utils.observeOnMain
+import com.arellomobile.mvp.InjectViewState
+import com.arellomobile.mvp.MvpPresenter
+import com.arny.core.addTo
+import com.arny.sentry.SentryApp
 import com.arny.sentry.data.api.getResponseError
 import com.arny.sentry.data.models.Asteroid
-import com.arny.sentry.data.source.MainRepositoryImpl
-import com.arny.sentry.presenter.base.BaseMvpPresenterImpl
+import com.arny.sentry.domain.AsteroidsUseCase
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-
-class MainPresenter : BaseMvpPresenterImpl<MainContract.View>(), MainContract.Presenter {
-    private val repository = MainRepositoryImpl.instance
+@InjectViewState
+class MainPresenter : MvpPresenter<MainView>() {
+    @Inject
+    lateinit var asteroidsUseCase: AsteroidsUseCase
     private val compositeDisposable = CompositeDisposable()
     private var requesting = false
     private var cache: ArrayList<Asteroid> = arrayListOf()
 
-    override fun restoreState() {
+    init {
+        SentryApp.appComponent.inject(this)
+    }
+
+    fun restoreState() {
         if (requesting) {
-            mView?.showProgress(true)
+            viewState?.showProgress(true)
         }
         if (cache.isNotEmpty()) {
-            mView?.updateList(cache)
+            viewState?.updateList(cache)
         }
     }
 
     fun request(distance: Double? = 1.0, useLunarDistance: Boolean, year: Int?, name: String?) {
         if (requesting) {
-            mView?.showError("Данные все еще загружаются")
+            viewState?.showError("Данные все еще загружаются")
             return
         }
         compositeDisposable.clear()
-        val requestDistance: String = if (!useLunarDistance) distance.toString() else distance.toString() + "LD"
-
-        mView?.showProgress(true)
-        val subscribe = repository.requestApiAsteroids(requestDistance, year, name)
-                .map { repository.convertCadResponse(it) }
-                .observeOnMain()
-                .doOnSubscribe {
-                    requesting = true
-                }
-                .doOnDispose {
-                    requesting = false
-                    mView?.showProgress(false)
-                }
+        requesting = true
+        viewState?.showProgress(true)
+        asteroidsUseCase.getAsteroids(distance, year, name, useLunarDistance)
                 .subscribe({
-                    mView?.showProgress(false)
+                    viewState?.showProgress(false)
                     requesting = false
                     this.cache = it
-                    mView?.updateList(it)
+                    viewState?.updateList(it)
                     if (it.isNotEmpty()) {
-                        mView?.setInfoVisible(false)
+                        viewState?.setInfoVisible(false)
                     } else {
-                        mView?.setInfoVisible(true)
-                        mView?.showError("нет данных")
+                        viewState?.setInfoVisible(true)
+                        viewState?.showError("нет данных")
                     }
                 }, {
-                    mView?.showProgress(false)
+                    requesting = false
+                    viewState?.showProgress(false)
                     requesting = false
                     it.printStackTrace()
-                    mView?.setInfoVisible(true)
-                    mView?.showError(getResponseError(it))
+                    viewState?.setInfoVisible(true)
+                    viewState?.showError(getResponseError(it))
                 })
-        compositeDisposable.add(subscribe)
+                .addTo(compositeDisposable)
     }
 }

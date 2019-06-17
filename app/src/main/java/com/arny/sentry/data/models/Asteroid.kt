@@ -1,9 +1,8 @@
 package com.arny.sentry.data.models
 
-import com.arny.sentry.data.utils.Utility
 import io.realm.RealmObject
+import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
-
 
 
 open class Asteroid: RealmObject() {
@@ -22,7 +21,13 @@ open class Asteroid: RealmObject() {
     var body: String? = null
     var h: Double? = null
     var fullname: String? = null
+    @Ignore
+    var smartDistance: String? = null
+    @Ignore
+    var radius: String? = null
     override fun toString(): String {
-        return Utility.getFields(this)
+        return "Asteroid(id=$id, name=$name, orbit_id=$orbit_id, jd=$jd, cd=$cd, dist=$dist, dist_min=$dist_min, dist_max=$dist_max, v_rel=$v_rel, v_inf=$v_inf, t_sigma_f=$t_sigma_f, body=$body, h=$h, fullname=$fullname)"
     }
+
+
 }

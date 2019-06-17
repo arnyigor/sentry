@@ -1,32 +1,22 @@
 package com.arny.sentry.data.source
 
 import android.content.Context
-import com.arny.sentry.BaseApp
+import com.arny.sentry.SentryApp
 import io.realm.Realm
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class MainRepositoryImpl : BaseRepository, RemoteRepository, LocalRepository, DBRepository {
+@Singleton
+class MainRepositoryImpl @Inject constructor() : BaseRepository, RemoteRepository, LocalRepository, DBRepository {
     private lateinit var realm: Realm
-    private object Holder {
-        val INSTANCE = MainRepositoryImpl()
-    }
 
     override fun getDB(): Realm {
         realm = Realm.getDefaultInstance()
         return realm
     }
 
-    companion object {
-        val instance: MainRepositoryImpl by lazy { Holder.INSTANCE }
-    }
-
     override fun getContext(): Context {
-        return BaseApp.appContext
+        return SentryApp.appContext
     }
-
-    fun getMainScoupe() = CoroutineScope(Dispatchers.Main)
-    fun getIOScoupe() = CoroutineScope(Dispatchers.IO)
-
 }

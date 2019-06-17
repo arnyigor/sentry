@@ -1,9 +1,8 @@
 package com.arny.sentry.data.source
 
 import com.arny.sentry.data.api.ApiProvider
+import com.arny.sentry.data.api.ApiService
 import com.arny.sentry.data.api.CadResponse
-import com.arny.sentry.data.api.SentryApi
-import com.arny.sentry.data.api.SentryApiService
 import com.arny.sentry.data.utils.DateTimeUtils
 import io.reactivex.Observable
 
@@ -21,6 +20,6 @@ interface RemoteRepository : BaseRepository {
         if (name != null && !name.isBlank()) {
             params["des"] = name.replace("\\s+".toRegex(), "")
         }
-        return ApiProvider.provideApi(SentryApi.BASE_URL, SentryApiService::class.java).request(params)
+        return ApiProvider.provideApi(Constants.API.BASE_URL, ApiService::class.java).getAsteroids(params)
     }
 }

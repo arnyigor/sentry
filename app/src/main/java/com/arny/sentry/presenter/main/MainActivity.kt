@@ -3,23 +3,23 @@ package com.arny.sentry.presenter.main
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
+import android.view.MenuItem
+import com.arellomobile.mvp.MvpAppCompatActivity
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.PresenterType
+import com.arny.core.parseDouble
+import com.arny.core.parseInt
+import com.arny.core.setVisible
 import com.arny.sentry.R
 import com.arny.sentry.data.models.Asteroid
-import com.arny.sentry.data.utils.parseDouble
-import com.arny.sentry.data.utils.parseInt
-import com.arny.sentry.data.utils.setVisible
-import com.arny.sentry.presenter.base.BaseMvpActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import android.view.MenuInflater
-import android.view.MenuItem
 
 
-class MainActivity : BaseMvpActivity<MainContract.View, MainPresenter>(), MainContract.View {
+class MainActivity : MvpAppCompatActivity(), MainView {
     private var adapter: MainAdapter? = null
 
-    override fun initPresenter(): MainPresenter {
-        return MainPresenter()
-    }
+    @InjectPresenter(type = PresenterType.LOCAL)
+    lateinit var mPresenter: MainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +49,6 @@ class MainActivity : BaseMvpActivity<MainContract.View, MainPresenter>(), MainCo
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        mPresenter.onPresenterDestroy()
     }
 
     override fun setInfoVisible(vis: Boolean) {

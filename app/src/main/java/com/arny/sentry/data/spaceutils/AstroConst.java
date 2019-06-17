@@ -6,6 +6,7 @@ public class AstroConst {
     public static final double  Smass = 1.9891e30;
     public static final double  Emass = 5.9737e24;
     public static final double  Moonmass = 7.348e22;
+    public static final double LD =  384402000;
     public static final double AU = 149597870691.0;// [m]
     public static final double PC = 3.0856775813e16;// [m]
     public static final double LY = 9.4607304725808E15;// [m]

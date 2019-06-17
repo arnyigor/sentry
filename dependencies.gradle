@@ -27,6 +27,7 @@ ext.versions = [
         'atsl'             : '1.0.1',
         'mockitoKotlin'    : '1.5.0',
         'robolectric'      : '3.6.1',
+        'moxy'             : '1.5.5',
         'sourceCompat'     : JavaVersion.VERSION_1_8,
         'targetCompat'     : JavaVersion.VERSION_1_8
 ]
@@ -106,7 +107,12 @@ ext.deps = [
                 'jodaTime'             : 'joda-time:joda-time:2.10.2',
                 'toasty'               : 'com.github.GrenderG:Toasty:1.1.4',
                 'materialDialogsCore'  : 'com.afollestad.material-dialogs:core:0.9.6.0',
-                'materialDialogsCommon': 'com.afollestad.material-dialogs:commons:0.9.6.0'
+                'materialDialogsCommon': 'com.afollestad.material-dialogs:commons:0.9.6.0',
+                'moxy'                 : "com.arello-mobile:moxy:${versions.moxy}",
+                'moxyAppCompat'        : "com.arello-mobile:moxy-app-compat:${versions.moxy}",
+                'moxySupport'          : "com.android.support:appcompat-v7:${versions.supportLibrary}",
+                'moxyAndroid'          : "com.arello-mobile:moxy-android:${versions.moxy}",
+                'moxyCompiler'         : "com.arello-mobile:moxy-compiler:${versions.moxy}"
         ],
         test      : [
                 'junit'          : "junit:junit:${versions.junit}",

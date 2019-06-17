@@ -1,24 +1,23 @@
 package com.arny.sentry.presenter.main
 
+import android.annotation.SuppressLint
+import com.arny.core.adapters.SimpleAbstractAdapter
 import com.arny.sentry.R
-import com.arny.sentry.data.adapters.SimpleAbstractAdapter
 import com.arny.sentry.data.models.Asteroid
-import com.arny.sentry.data.spaceutils.AstroConst
-import com.arny.sentry.data.spaceutils.AstroUtils
 import kotlinx.android.synthetic.main.asteroid_item_layout.view.*
 
 class MainAdapter : SimpleAbstractAdapter<Asteroid>() {
-    override fun getLayout(): Int {
+
+    override fun getLayout(viewType: Int): Int {
         return R.layout.asteroid_item_layout
     }
 
+    @SuppressLint("SetTextI18n")
     override fun bindView(item: Asteroid, viewHolder: VH) {
         viewHolder.itemView.apply {
-            tv_name.text = item.name
+            tv_name.text = "${item.name} Radius~${item.radius} m."
             tv_min_dist_date.text = item.cd
-            val dist_min = item.dist_min ?: 0.0
-            val smartDistance = AstroUtils.getSmartDistance(dist_min * AstroConst.AU)
-            tv_min_dist.text = smartDistance
+            tv_min_dist.text = item.smartDistance
         }
     }
 
